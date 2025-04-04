@@ -8,7 +8,9 @@ import {
   Plus,
   X,
   FolderPlus,
-  ArrowLeft
+  ArrowLeft,
+  FileText,
+  Keyboard
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import NoteForm from './NoteForm';
@@ -53,6 +55,10 @@ const Header = () => {
     switch (activeTab) {
       case 'folders':
         return <FolderPlus className="mr-2 h-4 w-4" />;
+      case 'notes':
+        return <FileText className="mr-2 h-4 w-4" />;
+      case 'shortcuts':
+        return <Keyboard className="mr-2 h-4 w-4" />;
       default:
         return <Plus className="mr-2 h-4 w-4" />;
     }

@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import NoteCard from './NoteCard';
 import ShortcutCard from './ShortcutCard';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Keyboard, FileText } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import NoteForm from './NoteForm';
 import ShortcutForm from './ShortcutForm';
@@ -61,14 +61,18 @@ const FolderContentView = () => {
           <Button 
             size="sm" 
             onClick={() => setNoteDialogOpen(true)}
+            title="Add Note"
           >
-            <Plus className="h-4 w-4 mr-1" /> Add Note
+            <FileText className="h-4 w-4" />
+            <Plus className="h-3 w-3" />
           </Button>
           <Button 
             size="sm" 
             onClick={() => setShortcutDialogOpen(true)}
+            title="Add Shortcut"
           >
-            <Plus className="h-4 w-4 mr-1" /> Add Shortcut
+            <Keyboard className="h-4 w-4" />
+            <Plus className="h-3 w-3" />
           </Button>
         </div>
       </div>
