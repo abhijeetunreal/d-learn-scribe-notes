@@ -1,13 +1,21 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from 'react';
+import AppLayout from '@/components/AppLayout';
+import { useAppContext } from '@/context/AppContext';
+import NotesView from '@/components/NotesView';
+import ShortcutsView from '@/components/ShortcutsView';
+import KeyboardView from '@/components/KeyboardView';
 
 const Index = () => {
+  const { state } = useAppContext();
+  const { activeTab } = state;
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <AppLayout>
+      {activeTab === 'notes' && <NotesView />}
+      {activeTab === 'shortcuts' && <ShortcutsView />}
+      {activeTab === 'keyboard' && <KeyboardView />}
+    </AppLayout>
   );
 };
 
