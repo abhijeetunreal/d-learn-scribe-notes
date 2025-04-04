@@ -12,20 +12,30 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { BookOpen, Keyboard, LucideIcon, BookText, Plus } from 'lucide-react';
+import { BookOpen, Keyboard, BookText, FolderOpen } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { Software, TabView } from '@/types';
 
 const AppSidebar = () => {
   const { state, dispatch } = useAppContext();
-  const { activeSoftware, software, activeTab } = state;
+  const { activeSoftware, software, activeTab, activeFolder } = state;
 
   const handleTabChange = (tab: TabView) => {
+    if (tab !== 'folders' && !activeFolder) {
+      // If switching to notes or shortcuts without an active folder,
+      // clear any folder filter
+      dispatch({ type: 'SET_ACTIVE_FOLDER', payload: undefined });
+    }
     dispatch({ type: 'SET_ACTIVE_TAB', payload: tab });
   };
 
   const handleSoftwareChange = (software: Software) => {
     dispatch({ type: 'SET_ACTIVE_SOFTWARE', payload: software });
+  };
+
+  const handleBackToFolders = () => {
+    dispatch({ type: 'SET_ACTIVE_FOLDER', payload: undefined });
+    dispatch({ type: 'SET_ACTIVE_TAB', payload: 'folders' });
   };
 
   return (
@@ -44,11 +54,20 @@ const AppSidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton 
+                  onClick={() => handleTabChange('folders')}
+                  className={activeTab === 'folders' ? 'bg-sidebar-accent' : ''}
+                >
+                  <FolderOpen size={18} />
+                  <span>Folders</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
                   onClick={() => handleTabChange('notes')}
                   className={activeTab === 'notes' ? 'bg-sidebar-accent' : ''}
                 >
                   <BookOpen size={18} />
-                  <span>Notes</span>
+                  <span>Notes{activeFolder ? ` (${activeFolder.name})` : ''}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -57,7 +76,7 @@ const AppSidebar = () => {
                   className={activeTab === 'shortcuts' ? 'bg-sidebar-accent' : ''}
                 >
                   <BookText size={18} />
-                  <span>Shortcuts</span>
+                  <span>Shortcuts{activeFolder ? ` (${activeFolder.name})` : ''}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -91,6 +110,23 @@ const AppSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {activeFolder && (
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton 
+                    onClick={handleBackToFolders}
+                    className="text-blue-500 hover:text-blue-600"
+                  >
+                    <span>← Back to folders</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
     </Sidebar>
   );

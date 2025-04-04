@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { Note, Shortcut, Software, TabView } from '@/types';
+import { Note, Shortcut, Software, TabView, Folder } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 
 // Sample initial data
@@ -10,6 +10,23 @@ const softwareList: Software[] = [
   { id: 'cinema4d', name: 'Cinema 4D', icon: '🎬' },
   { id: 'zbrush', name: 'ZBrush', icon: '🗿' },
   { id: 'substance', name: 'Substance Painter', icon: '🎨' },
+  { id: 'rhino', name: 'Rhino', icon: '🦏' },
+];
+
+// Sample folders
+const sampleFolders: Folder[] = [
+  {
+    id: '1',
+    name: 'Modeling Basics',
+    softwareId: 'blender',
+    createdAt: new Date('2023-01-10'),
+  },
+  {
+    id: '2',
+    name: 'Animation',
+    softwareId: 'blender',
+    createdAt: new Date('2023-02-15'),
+  },
 ];
 
 // Sample shortcuts for Blender
@@ -21,6 +38,7 @@ const sampleShortcuts: Shortcut[] = [
     description: 'Select all objects in the scene',
     softwareId: 'blender',
     category: 'Selection',
+    folderId: '1',
   },
   {
     id: '2',
@@ -29,6 +47,7 @@ const sampleShortcuts: Shortcut[] = [
     description: 'Delete selected objects',
     softwareId: 'blender',
     category: 'Editing',
+    folderId: '1',
   },
   {
     id: '3',
@@ -63,6 +82,7 @@ const sampleNotes: Note[] = [
     title: 'Getting Started with Blender Interface',
     content: 'The Blender interface is divided into editors, which can be customized for different workflows. Right-click to select objects by default.',
     softwareId: 'blender',
+    folderId: '1',
     createdAt: new Date('2023-01-15'),
     updatedAt: new Date('2023-01-15'),
     tags: ['beginner', 'interface'],
@@ -72,6 +92,7 @@ const sampleNotes: Note[] = [
     title: 'Modeling Workflow Tips',
     content: 'Start with basic shapes and refine. Use the modifier stack for non-destructive editing. Mirror modifier is great for symmetrical objects.',
     softwareId: 'blender',
+    folderId: '2',
     createdAt: new Date('2023-02-10'),
     updatedAt: new Date('2023-02-12'),
     tags: ['modeling', 'workflow'],
@@ -82,7 +103,9 @@ const sampleNotes: Note[] = [
 type AppState = {
   activeTab: TabView;
   activeSoftware: Software;
+  activeFolder?: Folder;
   software: Software[];
+  folders: Folder[];
   notes: Note[];
   shortcuts: Shortcut[];
   searchQuery: string;
@@ -91,6 +114,10 @@ type AppState = {
 type Action =
   | { type: 'SET_ACTIVE_TAB'; payload: TabView }
   | { type: 'SET_ACTIVE_SOFTWARE'; payload: Software }
+  | { type: 'SET_ACTIVE_FOLDER'; payload: Folder | undefined }
+  | { type: 'ADD_FOLDER'; payload: Omit<Folder, 'id' | 'createdAt'> }
+  | { type: 'UPDATE_FOLDER'; payload: Folder }
+  | { type: 'DELETE_FOLDER'; payload: string }
   | { type: 'ADD_NOTE'; payload: Omit<Note, 'id' | 'createdAt' | 'updatedAt'> }
   | { type: 'UPDATE_NOTE'; payload: Note }
   | { type: 'DELETE_NOTE'; payload: string }
@@ -101,9 +128,10 @@ type Action =
 
 // Initial state
 const initialState: AppState = {
-  activeTab: 'notes',
+  activeTab: 'folders',
   activeSoftware: softwareList[0],
   software: softwareList,
+  folders: sampleFolders,
   notes: sampleNotes,
   shortcuts: sampleShortcuts,
   searchQuery: '',
@@ -121,7 +149,45 @@ const appReducer = (state: AppState, action: Action): AppState => {
       return {
         ...state,
         activeSoftware: action.payload,
+        activeFolder: undefined,
       };
+    case 'SET_ACTIVE_FOLDER':
+      return {
+        ...state,
+        activeFolder: action.payload,
+      };
+    case 'ADD_FOLDER': {
+      const newFolder: Folder = {
+        id: uuidv4(),
+        ...action.payload,
+        createdAt: new Date(),
+      };
+      return {
+        ...state,
+        folders: [...state.folders, newFolder],
+      };
+    }
+    case 'UPDATE_FOLDER':
+      return {
+        ...state,
+        folders: state.folders.map((folder) =>
+          folder.id === action.payload.id ? action.payload : folder
+        ),
+        activeFolder: state.activeFolder?.id === action.payload.id 
+          ? action.payload 
+          : state.activeFolder,
+      };
+    case 'DELETE_FOLDER': {
+      // When deleting a folder, also remove its notes and shortcuts or make them folderless
+      const deletedFolderId = action.payload;
+      return {
+        ...state,
+        folders: state.folders.filter((folder) => folder.id !== deletedFolderId),
+        notes: state.notes.filter((note) => note.folderId !== deletedFolderId),
+        shortcuts: state.shortcuts.filter((shortcut) => shortcut.folderId !== deletedFolderId),
+        activeFolder: state.activeFolder?.id === deletedFolderId ? undefined : state.activeFolder,
+      };
+    }
     case 'ADD_NOTE': {
       const newNote: Note = {
         id: uuidv4(),

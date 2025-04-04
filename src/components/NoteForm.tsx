@@ -13,7 +13,7 @@ interface NoteFormProps {
 
 const NoteForm = ({ noteId, onSuccess }: NoteFormProps) => {
   const { state, dispatch } = useAppContext();
-  const { activeSoftware, notes } = state;
+  const { activeSoftware, notes, activeFolder } = state;
   
   const existingNote = noteId 
     ? notes.find(note => note.id === noteId) 
@@ -48,6 +48,7 @@ const NoteForm = ({ noteId, onSuccess }: NoteFormProps) => {
           title,
           content,
           softwareId: activeSoftware.id,
+          folderId: activeFolder?.id,
           tags: tagArray,
         },
       });

@@ -5,11 +5,19 @@ export interface Software {
   icon: string;
 }
 
+export interface Folder {
+  id: string;
+  name: string;
+  softwareId: string;
+  createdAt: Date;
+}
+
 export interface Note {
   id: string;
   title: string;
   content: string;
   softwareId: string;
+  folderId?: string;
   createdAt: Date;
   updatedAt: Date;
   tags: string[];
@@ -21,6 +29,7 @@ export interface Shortcut {
   keys: string[];
   description: string;
   softwareId: string;
+  folderId?: string;
   category?: string;
 }
 
@@ -30,4 +39,4 @@ export interface Category {
   softwareId: string;
 }
 
-export type TabView = 'notes' | 'shortcuts' | 'keyboard';
+export type TabView = 'folders' | 'notes' | 'shortcuts' | 'keyboard';

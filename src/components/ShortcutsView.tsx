@@ -6,19 +6,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const ShortcutsView = () => {
   const { state } = useAppContext();
-  const { shortcuts, activeSoftware, searchQuery } = state;
+  const { shortcuts, activeSoftware, searchQuery, activeFolder } = state;
 
-  // Filter shortcuts by active software and search query
+  // Filter shortcuts by active software, active folder (if any), and search query
   const filteredShortcuts = useMemo(() => {
     return shortcuts.filter(shortcut => 
       shortcut.softwareId === activeSoftware.id && 
+      (activeFolder ? shortcut.folderId === activeFolder.id : true) && 
       (searchQuery === '' || 
         shortcut.action.toLowerCase().includes(searchQuery.toLowerCase()) ||
         shortcut.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         shortcut.keys.some(key => key.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (shortcut.category && shortcut.category.toLowerCase().includes(searchQuery.toLowerCase())))
     );
-  }, [shortcuts, activeSoftware, searchQuery]);
+  }, [shortcuts, activeSoftware, searchQuery, activeFolder]);
 
   // Get unique categories and count shortcuts per category
   const categories = useMemo(() => {
@@ -52,7 +53,9 @@ const ShortcutsView = () => {
                 <p className="text-muted-foreground mt-1">
                   {searchQuery 
                     ? "Try adjusting your search query" 
-                    : "Create your first shortcut by clicking the 'New Shortcut' button"}
+                    : activeFolder
+                      ? `Add shortcuts to the "${activeFolder.name}" folder by clicking the 'New Shortcut' button`
+                      : "Create your first shortcut by clicking the 'New Shortcut' button"}
                 </p>
               </div>
             ) : (

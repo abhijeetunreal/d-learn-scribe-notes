@@ -16,7 +16,7 @@ const CATEGORIES = ['Selection', 'Transform', 'Modeling', 'Editing', 'Navigation
 
 const ShortcutForm = ({ shortcutId, onSuccess }: ShortcutFormProps) => {
   const { state, dispatch } = useAppContext();
-  const { activeSoftware, shortcuts } = state;
+  const { activeSoftware, shortcuts, activeFolder } = state;
   
   const existingShortcut = shortcutId 
     ? shortcuts.find(shortcut => shortcut.id === shortcutId) 
@@ -54,6 +54,7 @@ const ShortcutForm = ({ shortcutId, onSuccess }: ShortcutFormProps) => {
           keys: keyArray,
           description,
           softwareId: activeSoftware.id,
+          folderId: activeFolder?.id,
           category,
         },
       });
