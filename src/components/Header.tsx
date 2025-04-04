@@ -33,6 +33,9 @@ const Header = () => {
     dispatch({ type: 'SET_ACTIVE_TAB', payload: 'folders' });
   };
 
+  // Don't show the add button when in a folder view since we have dedicated buttons there
+  const shouldShowAddButton = !activeFolder || activeTab === 'folders' || activeTab === 'keyboard';
+
   const getButtonLabel = () => {
     switch (activeTab) {
       case 'folders':
@@ -117,20 +120,22 @@ const Header = () => {
         </div>
       </div>
       
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button>
-            {getButtonIcon()}
-            <span>{getButtonLabel()}</span>
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[550px]">
-          <DialogHeader>
-            <DialogTitle>{getDialogTitle()}</DialogTitle>
-          </DialogHeader>
-          {getDialogContent()}
-        </DialogContent>
-      </Dialog>
+      {shouldShowAddButton && (
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              {getButtonIcon()}
+              <span>{getButtonLabel()}</span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[550px]">
+            <DialogHeader>
+              <DialogTitle>{getDialogTitle()}</DialogTitle>
+            </DialogHeader>
+            {getDialogContent()}
+          </DialogContent>
+        </Dialog>
+      )}
     </header>
   );
 };
