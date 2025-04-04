@@ -7,7 +7,8 @@ import {
   Search, 
   Plus,
   X,
-  FolderPlus
+  FolderPlus,
+  ArrowLeft
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import NoteForm from './NoteForm';
@@ -25,6 +26,11 @@ const Header = () => {
 
   const clearSearch = () => {
     dispatch({ type: 'SET_SEARCH_QUERY', payload: '' });
+  };
+
+  const handleBackToFolders = () => {
+    dispatch({ type: 'SET_ACTIVE_FOLDER', payload: undefined });
+    dispatch({ type: 'SET_ACTIVE_TAB', payload: 'folders' });
   };
 
   const getButtonLabel = () => {
@@ -78,6 +84,16 @@ const Header = () => {
   return (
     <header className="border-b p-4 bg-background flex items-center justify-between">
       <div className="flex items-center gap-4">
+        {activeFolder && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleBackToFolders}
+            className="mr-1"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
         <h1 className="text-xl font-bold hidden md:block">
           {activeSoftware.name} {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
           {activeFolder && activeTab !== 'folders' ? ` - ${activeFolder.name}` : ''}

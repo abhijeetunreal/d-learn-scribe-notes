@@ -33,11 +33,6 @@ const AppSidebar = () => {
     dispatch({ type: 'SET_ACTIVE_SOFTWARE', payload: software });
   };
 
-  const handleBackToFolders = () => {
-    dispatch({ type: 'SET_ACTIVE_FOLDER', payload: undefined });
-    dispatch({ type: 'SET_ACTIVE_TAB', payload: 'folders' });
-  };
-
   return (
     <Sidebar>
       <SidebarHeader className="flex items-center justify-between p-4">
@@ -110,23 +105,6 @@ const AppSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        {activeFolder && (
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton 
-                    onClick={handleBackToFolders}
-                    className="text-blue-500 hover:text-blue-600"
-                  >
-                    <span>← Back to folders</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
       </SidebarContent>
     </Sidebar>
   );
